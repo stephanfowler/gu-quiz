@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+    <!--link rel="stylesheet" href="css/fonts.css"></style>
+    <link rel="stylesheet" href="css/style.css"></style-->
+    
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://fb.me/react-0.13.0.min.js"></script>
+    <script src="libs/lodash.js"></script>
+</head>
+<body>
+    
+    <div class="header">Quiz</div>
+    <div class="js-quiz-placeholder"></div>
+
+    <script>
+        var quiz = {
+                questions: [
+                    {
+                        question: "What is the answer A?",
+                        answers: [
+                            {
+                                text: "Foo",
+                                value: false
+                            },
+                            {
+                                text: "Bar bar",
+                                value: true
+                            },
+                            {
+                                text: "Baz baz",
+                                value: false
+                            },
+                        ]
+                    },
+                    {
+                        question: "What is the answer B?",
+                        answers: [
+                            {
+                                text: "Foo",
+                                value: false
+                            },
+                            {
+                                text: "Bar bar",
+                                value: true
+                            },
+                            {
+                                text: "Baz baz",
+                                value: false
+                            },
+                        ]
+                    },
+                    {
+                        question: "What is the answer C?",
+                        answers: [
+                            {
+                                text: "Foo",
+                                value: false
+                            },
+                            {
+                                text: "Bar bar",
+                                value: true
+                            },
+                            {
+                                text: "Baz baz",
+                                value: false
+                            },
+                        ]
+                    }
+                ]
+            },
+
+            placeholder = document.querySelector('.js-quiz-placeholder'),
+
+            QuestionsList = React.createClass({
+                render: function () {                
+                    questions = _.reduce(this.props.questions, function (obj, question, i) {
+                        obj[i] = React.createElement(Question, {question: question});
+                        return obj;
+                    }, {});
+
+                    return React.DOM.div(null, questions);
+                }
+            }),
+
+            Question = React.createClass({
+                render: function () {                
+                    return React.DOM.div({className: 'quiz-question'}, [
+                        React.DOM.div(null, this.props.question.question),
+                        React.createElement(AnswerList, {answers: this.props.question.answers})                           
+                    ]);
+                }
+            }),
+
+            AnswerList = React.createClass({
+                render: function () {                
+                    answers = _.reduce(this.props.answers, function (obj, answer, i) {
+                        obj[i] = React.createElement(Answer, {answer: answer});
+                        return obj;
+                    }, {});
+
+                    return React.DOM.ol(null, answers);
+                }
+            }),
+
+            Answer = React.createClass({
+                render: function () {                
+                    return React.DOM.div({className: 'quiz-answer'}, [
+                        React.DOM.li(null, this.props.answer.text)
+                    ]);
+                }
+            });
+
+        function init() {
+            React.render(React.createElement(QuestionsList, {questions: quiz.questions}), placeholder);
+        }
+
+        init();
+    </script>
+</body>
+</html>

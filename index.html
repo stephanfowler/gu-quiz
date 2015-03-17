@@ -26,17 +26,17 @@
                             {
                                 "image": "picture-of-kju.jpg",
                                 "answer": "Kim Jong-Un",
-                                "score": 1
+                                "correct": false
                             },
                             {
                                 "image": "picture-of-kji.jpg",
                                 "answer": "Kim Jong-Il",
-                                "score": 0
+                                "correct": true
                             },
                             {
                                 "image": "picture-of-kk.jpg",
                                 "answer": "Kim Kardashian",
-                                "score": -1
+                                "correct": false
                             }
                         ],
                         "completionMessage": "<a href = 'http://www.theguardian.com/world/kim-jong-il'>Kim Jong-Il</a> died in 2011 having chosen his youngest son, Kim Jong-Un, to be his successor."
@@ -120,29 +120,47 @@
             }),
 
             Question = React.createClass({
-                render: function () {                
-                    return React.DOM.div({className: 'quiz-question'}, [
-                        React.DOM.h4(null, this.props.question.question),
-                        React.DOM.ol(null, 
-                            _.map(this.props.question.multiChoiceAnswers, function (answer, i) {
-                                return React.createElement(Answer, {answer: answer});
-                            })
-                        )
+                getInitialState: function () {
+                    return {isAnswered: false};
+                },
+                handleAnswer: function (answer) {
+                    this.setState({isAnswered: answer});
+                },
+                render: function () {
+                    var self = this,
+                        question = this.props.question,
+                        answers = question.multiChoiceAnswers,
+                        answersShown;
+
+                    if (this.state.isAnswered) {
+                        answersShown = React.DOM.div(null, this.state.isAnswered.answer);
+                    } else {
+                        answersShown = _.map(answers, function (answer) {
+                            return React.createElement(Answer, {answer: answer, handleAnswer: self.handleAnswer});
+                        })
+                    }
+
+                    return React.DOM.div({
+                            className: this.state.isAnswered ? 'isAnswered' : ''
+                        }, [
+                        React.DOM.h4(null, question.question),
+                        React.DOM.ol(null, answersShown)
                     ]);
                 }
             }),
 
             Answer = React.createClass({
-                handleAnswer: function (answer) {
-                    answer.selected = true;
-                    console.log(answer)
+                handleClick: function (answer) {
+                    this.props.handleAnswer(answer);
                 },
                 render: function () {                
-                    var self = this;
+                    var self = this,
+                        answer = this.props.answer;
+
                     return React.DOM.div({className: 'quiz-answer'}, [
                         React.DOM.li({
-                            onClick: self.handleAnswer.bind(self, this.props.answer),                                
-                        }, this.props.answer.answer)
+                            onClick: self.handleClick.bind(self, answer),                                
+                        }, answer.answer)
                     ]);
                 }
             });
